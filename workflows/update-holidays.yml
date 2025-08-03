@@ -3,7 +3,7 @@ name: Update Holidays JSON
 on:
   schedule:
     - cron: '0 0 1 * *'  # 매월 1일 00:00 UTC (한국 시간 오전 9시)
-  workflow_dispatch:      # 수동 실행 버튼도 추가
+  workflow_dispatch:
 
 jobs:
   update-holidays:
@@ -20,15 +20,17 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./  # 루트 경로에서 실행
 
       - name: Run update script
         run: node scripts/update-holidays.js
+        working-directory: ./  # 루트 경로에서 실행
 
       - name: Commit and Push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
+          
           if [ -n "$(git status --porcelain)" ]; then
             git add public/holidays.json
             git commit -m "✅ 자동 업데이트된 공휴일 목록"
@@ -36,3 +38,4 @@ jobs:
           else
             echo "변경 사항이 없어 커밋하지 않음"
           fi
+        working-directory: ./  # 루트 경로에서 실행
